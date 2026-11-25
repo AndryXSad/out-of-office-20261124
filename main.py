@@ -17,14 +17,23 @@ ENTRY = (
 )
 
 
-def main() -> int:
-    if not ENTRY.strip() or len(ENTRY) > 159:
-        print("entry fails the 1-159 character gate", file=sys.stderr)
-        return 1
+def _validate(entry: str) -> bool:
+    """The bounty gate: one non-blank line, at most 159 characters."""
+    return bool(entry.strip()) and len(entry) <= 159
+
+
+def _write_entry(entry: str) -> None:
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as fh:
-        fh.write(ENTRY)
+        fh.write(entry)
+
+
+def main() -> int:
+    if not _validate(ENTRY):
+        print("entry fails the 1-159 character gate", file=sys.stderr)
+        return 1
+    _write_entry(ENTRY)
     return 0
 
 
